@@ -1,0 +1,130 @@
+<style>
+    .ol-container { font-family: sans-serif; max-width: 650px; margin: 20px auto; color: #333; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background-color: #f4f4f4; }
+    
+    /* Leaderboard styling */
+    .leaderboard-section { background-color: #fffde7; padding: 15px; border: 2px solid #fbc02d; border-radius: 8px; }
+    .pos-1 { background-color: #ffd700; font-weight: bold; } /* Gullfarge for lederen */
+    .winner-tag { font-size: 0.8em; color: #d32f2f; text-transform: uppercase; margin-left: 5px; }
+    
+    h3 { border-bottom: 2px solid #333; padding-bottom: 5px; }
+</style>
+
+<div class="ol-container">
+    <h3>🏅 Medaljestatus: Norge</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nasjon</th>
+                <th style="background:#ffd700">G</th>
+                <th style="background:#c0c0c0">S</th>
+                <th style="background:#cd7f32">B</th>
+                <th style="background:#e3f2fd">Total Poeng</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Norge 🇳🇴</td>
+                <td id="norge-gull">3</td> 
+                <td id="norge-solv">1</td>
+                <td id="norge-bronse">2</td>
+                <td id="norge-poeng" style="font-weight:bold">0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="leaderboard-section">
+        <h3>🏆 Tippekonkurranse: Stilling</h3>
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>Plass</th>
+                    <th>Navn</th>
+                    <th>Tips (G-S-B)</th>
+                    <th>Poeng</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr data-navn="Monica" data-g="8" data-s="5" data-b="4"></tr>
+                <tr data-navn="Åse Reidun" data-g="11" data-s="7" data-b="7"></tr>
+                <tr data-navn="Tor" data-g="9" data-s="9" data-b="9"></tr>
+                <tr data-navn="Markus" data-g="11" data-s="7" data-b="14"></tr>
+                <tr data-navn="Cecilie" data-g="12" data-s="10" data-b="7"></tr>
+                <tr data-navn="Filip" data-g="10" data-s="11" data-b="12"></tr>
+                <tr data-navn="Geir" data-g="12" data-s="9" data-b="12"></tr>
+                <tr data-navn="Silje" data-g="11" data-s="9" data-b="15"></tr>
+                <tr data-navn="Daniel" data-g="14" data-s="7" data-b="11"></tr>
+                <tr data-navn="Janne" data-g="13" data-s="10" data-b="8"></tr>
+                <tr data-navn="André" data-g="12" data-s="11" data-b="10"></tr>
+                <tr data-navn="Hanne" data-g="12" data-s="11" data-b="12"></tr>
+                <tr data-navn="Tonje" data-g="13" data-s="10" data-b="12"></tr>
+                <tr data-navn="Truls" data-g="14" data-s="10" data-b="9"></tr>
+                <tr data-navn="Ingrid" data-g="12" data-s="12" data-b="12"></tr>
+                <tr data-navn="Anders" data-g="13" data-s="11" data-b="11"></tr>
+            </tbody>
+        </table>
+        <p><small>* Ved lik poengsum vinner den med tips nærmest faktisk antall gull.</small></p>
+    </div>
+</div>
+
+<script>
+function oppdaterKonkurranse() {
+    // 1. Hent faktiske tall for Norge
+    const faktG = parseInt(document.getElementById('norge-gull').innerText);
+    const faktS = parseInt(document.getElementById('norge-solv').innerText);
+    const faktB = parseInt(document.getElementById('norge-bronse').innerText);
+    
+    // Beregn Norges poengsum (3-2-1)
+    const faktPoeng = (faktG * 3) + (faktS * 2) + (faktB * 1);
+    document.getElementById('norge-poeng').innerText = faktPoeng;
+
+    const deltakere = [];
+    const rader = document.querySelectorAll('#leaderboard-body tr');
+
+    // 2. Beregn poeng for hver deltaker
+    rader.forEach(rad => {
+        const navn = rad.getAttribute('data-navn');
+        const g = parseInt(rad.getAttribute('data-g'));
+        const s = parseInt(rad.getAttribute('data-s'));
+        const b = parseInt(rad.getAttribute('data-b'));
+        
+        const poengTips = (g * 3) + (s * 2) + (b * 1);
+        
+        // Regel: Hvor nærme er tips-poengsummen den faktiske poengsummen?
+        // Vi regner differanse (jo lavere, jo bedre)
+        const diffPoeng = Math.abs(faktPoeng - poengTips);
+        const diffGull = Math.abs(faktG - g);
+
+        deltakere.push({ navn, g, s, b, poengTips, diffPoeng, diffGull });
+    });
+
+    // 3. Sortering: 
+    // Først: Lavest differanse i poengsum.
+    // Ved likhet: Lavest differanse i antall gull.
+    deltakere.sort((a, b) => {
+        if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
+        return a.diffGull - b.diffGull;
+    });
+
+    // 4. Bygg tabellen på nytt
+    const tbody = document.getElementById('leaderboard-body');
+    tbody.innerHTML = '';
+
+    deltakere.forEach((d, index) => {
+        const row = tbody.insertRow();
+        if (index === 0) row.className = 'pos-1';
+        
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${d.navn} ${index === 0 ? '<span class="winner-tag">Leder!</span>' : ''}</td>
+            <td>${d.g}-${d.s}-${d.b} (${d.poengTips}p)</td>
+            <td>${d.diffPoeng === 0 ? 'Korrekt poengsum!' : d.diffPoeng + ' poeng unna'}</td>
+        `;
+    });
+}
+
+// Kjør ved oppstart
+oppdaterKonkurranse();
+</script>
