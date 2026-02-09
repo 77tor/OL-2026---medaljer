@@ -9,7 +9,13 @@
     .pos-1 { background-color: #ffd700; font-weight: bold; } /* Gullfarge for lederen */
     .winner-tag { font-size: 0.8em; color: #d32f2f; text-transform: uppercase; margin-left: 5px; }
     
-    h3 { border-bottom: 2px solid #333; padding-bottom: 5px; }
+    h3 { border-bottom: 1px solid #333; padding-bottom: 1px; }
+
+#leaderboard th, 
+#leaderboard td {
+    padding: 2px 8px; /* Første tall er topp/bunn, andre er høyre/venstre */
+    line-height: 1.2;  /* Gjør selve tekstlinjen mer kompakt */
+}
 </style>
 
 <div class="ol-container">
@@ -26,7 +32,7 @@
         </thead>
         <tbody>
             <tr>
-                <td>Norge 🇳🇴</td>
+                <td>Norge</td>
                 <td id="norge-gull">3</td> 
                 <td id="norge-solv">1</td>
                 <td id="norge-bronse">2</td>
