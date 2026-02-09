@@ -6,16 +6,16 @@
     
     /* Leaderboard styling */
     .leaderboard-section { background-color: #fffde7; padding: 15px; border: 2px solid #fbc02d; border-radius: 8px; }
-    .pos-1 { background-color: #ffd700; font-weight: bold; } /* Gullfarge for lederen */
+    .pos-1 { background-color: #ffd700; font-weight: bold; } 
     .winner-tag { font-size: 0.8em; color: #d32f2f; text-transform: uppercase; margin-left: 5px; }
     
-    h3 { border-bottom: 1px solid #333; padding-bottom: 1px; }
+    h3 { border-bottom: 1px solid #333; padding-bottom: 5px; }
 
-#leaderboard th, 
-#leaderboard td {
-    padding: 2px 8px; /* Første tall er topp/bunn, andre er høyre/venstre */
-    line-height: 1.2;  /* Gjør selve tekstlinjen mer kompakt */
-}
+    #leaderboard th, 
+    #leaderboard td {
+        padding: 2px 8px;
+        line-height: 1.2;
+    }
 </style>
 
 <div class="ol-container">
@@ -49,7 +49,7 @@
                     <th>Plass</th>
                     <th>Navn</th>
                     <th>Tips (G-S-B)</th>
-                    <th>Poeng</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
@@ -76,45 +76,63 @@
 </div>
 
 <script>
+async function oppdaterFraNRK() {
+    try {
+        // Vi prøver å hente data
+        const res = await fetch('https://psapi.nrk.no/sport/ol/medaljer');
+        if (!res.ok) throw new Error("API utilgjengelig");
+        
+        const data = await res.json();
+        
+        // NRK pakker ofte inn dataene i en liste. Vi leter etter 'NOR'
+        const norge = data.find(land => land.countryCode === 'NOR' || land.countryName === 'Norge');
+
+        if (norge) {
+            document.getElementById('norge-gull').innerText = norge.gold ?? norge.goldMedals ?? 0;
+            document.getElementById('norge-solv').innerText = norge.silver ?? norge.silverMedals ?? 0;
+            document.getElementById('norge-bronse').innerText = norge.bronze ?? norge.bronzeMedals ?? 0;
+            console.log("Suksess: Hentet data fra NRK");
+        }
+    } catch (error) {
+        console.warn("Kunne ikke hente live-data (CORS eller API-feil). Bruker tall fra tabellen.");
+    } finally {
+        // Uansett om fetch gikk bra eller ikke, beregn konkurransen
+        oppdaterKonkurranse();
+    }
+}
+
 function oppdaterKonkurranse() {
-    // 1. Hent faktiske tall for Norge
-    const faktG = parseInt(document.getElementById('norge-gull').innerText);
-    const faktS = parseInt(document.getElementById('norge-solv').innerText);
-    const faktB = parseInt(document.getElementById('norge-bronse').innerText);
+    const faktG = parseInt(document.getElementById('norge-gull').innerText) || 0;
+    const faktS = parseInt(document.getElementById('norge-solv').innerText) || 0;
+    const faktB = parseInt(document.getElementById('norge-bronse').innerText) || 0;
     
-    // Beregn Norges poengsum (3-2-1)
     const faktPoeng = (faktG * 3) + (faktS * 2) + (faktB * 1);
     document.getElementById('norge-poeng').innerText = faktPoeng;
 
-    const deltakere = [];
     const rader = document.querySelectorAll('#leaderboard-body tr');
+    let deltakere = [];
 
-    // 2. Beregn poeng for hver deltaker
     rader.forEach(rad => {
         const navn = rad.getAttribute('data-navn');
+        if(!navn) return; // Hopper over tomme rader
+
         const g = parseInt(rad.getAttribute('data-g'));
         const s = parseInt(rad.getAttribute('data-s'));
         const b = parseInt(rad.getAttribute('data-b'));
         
         const poengTips = (g * 3) + (s * 2) + (b * 1);
-        
-        // Regel: Hvor nærme er tips-poengsummen den faktiske poengsummen?
-        // Vi regner differanse (jo lavere, jo bedre)
         const diffPoeng = Math.abs(faktPoeng - poengTips);
         const diffGull = Math.abs(faktG - g);
 
         deltakere.push({ navn, g, s, b, poengTips, diffPoeng, diffGull });
     });
 
-    // 3. Sortering: 
-    // Først: Lavest differanse i poengsum.
-    // Ved likhet: Lavest differanse i antall gull.
+    // Sortering
     deltakere.sort((a, b) => {
         if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
         return a.diffGull - b.diffGull;
     });
 
-    // 4. Bygg tabellen på nytt
     const tbody = document.getElementById('leaderboard-body');
     tbody.innerHTML = '';
 
@@ -126,11 +144,11 @@ function oppdaterKonkurranse() {
             <td>${index + 1}</td>
             <td>${d.navn} ${index === 0 ? '<span class="winner-tag">Leder!</span>' : ''}</td>
             <td>${d.g}-${d.s}-${d.b} (${d.poengTips}p)</td>
-            <td>${d.diffPoeng === 0 ? 'Korrekt poengsum!' : d.diffPoeng + ' poeng unna'}</td>
+            <td>${d.diffPoeng === 0 ? '🎯 Spot on!' : d.diffPoeng + ' poeng unna'}</td>
         `;
     });
 }
 
-// Kjør ved oppstart
-oppdaterKonkurranse();
+// Kjør når siden er klar
+window.onload = oppdaterFraNRK;
 </script>
