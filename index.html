@@ -109,28 +109,34 @@ function oppdaterKonkurranse() {
     const faktPoeng = (faktG * 3) + (faktS * 2) + (faktB * 1);
     document.getElementById('norge-poeng').innerText = faktPoeng;
 
-    const rader = document.querySelectorAll('#leaderboard-body tr');
     let deltakere = [];
+    const rader = document.querySelectorAll('#leaderboard-body tr');
 
     rader.forEach(rad => {
         const navn = rad.getAttribute('data-navn');
-        if(!navn) return; // Hopper over tomme rader
+        if (!navn) return;
 
-        const g = parseInt(rad.getAttribute('data-g'));
-        const s = parseInt(rad.getAttribute('data-s'));
-        const b = parseInt(rad.getAttribute('data-b'));
+        const g = parseInt(rad.getAttribute('data-g')) || 0;
+        const s = parseInt(rad.getAttribute('data-s')) || 0;
+        const b = parseInt(rad.getAttribute('data-b')) || 0;
         
         const poengTips = (g * 3) + (s * 2) + (b * 1);
-        const diffPoeng = Math.abs(faktPoeng - poengTips);
-        const diffGull = Math.abs(faktG - g);
-
-        deltakere.push({ navn, g, s, b, poengTips, diffPoeng, diffGull });
+        
+        deltakere.push({ 
+            navn, g, s, b, poengTips, 
+            diffPoeng: Math.abs(faktPoeng - poengTips), 
+            diffGull: Math.abs(faktG - g),
+            diffSolv: Math.abs(faktS - s),
+            diffBronse: Math.abs(faktB - b)
+        });
     });
 
-    // Sortering
+    // Her starter sorteringen (viktig linje!)
     deltakere.sort((a, b) => {
         if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
-        return a.diffGull - b.diffGull;
+        if (a.diffGull !== b.diffGull) return a.diffGull - b.diffGull;
+        if (a.diffSolv !== b.diffSolv) return a.diffSolv - b.diffSolv;
+        return a.diffBronse - b.diffBronse;
     });
 
     const tbody = document.getElementById('leaderboard-body');
