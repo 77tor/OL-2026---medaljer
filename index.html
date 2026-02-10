@@ -155,6 +155,18 @@ function oppdaterKonkurranse() {
     });
 }
 
+// Funksjon som starter det hele
+function startOppdatering() {
+    // 1. Kjør oppdatering med en gang siden laster
+    oppdaterFraNRK();
+
+    // 2. Sett opp intervall som kjører hvert 2. minutt (120 000 millisekunder)
+    setInterval(function() {
+        console.log("Auto-oppdatering kjører...");
+        oppdaterFraNRK();
+    }, 120000); 
+}
+
 // Kjør når siden er klar
-window.onload = oppdaterFraNRK;
+window.onload = startOppdatering;
 </script>
