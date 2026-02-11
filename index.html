@@ -3,7 +3,7 @@
 <head>
     <style>
         :root { --gull: #FFD700; --solv: #C0C0C0; --bronse: #CD7F32; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; padding: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; padding: 10px; }
         .card { max-width: 500px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 25px; }
         h1 { text-align: center; color: #1a365d; margin-top: 0; }
         
@@ -104,14 +104,25 @@ function oppdaterAlt() {
             ...d,
             poengTips,
             diffPoeng: Math.abs(faktPoeng - poengTips),
-            diffGull: Math.abs(faktiskeMedaljer.gull - d.g)
+            diffGull: Math.abs(faktiskeMedaljer.gull - d.g),
+            diffSolv: Math.abs(faktiskeMedaljer.solv - d.s),
+            diffBronse: Math.abs(faktiskeMedaljer.bronse - d.b)
         };
     });
 
-    // 3. Sorter: Lavest poengavvik først, så gullavvik
+    // 3. Avansert Sortering (Tie-breaking)
     resultatListe.sort((a, b) => {
+        // Sjekk poengavvik først
         if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
-        return a.diffGull - b.diffGull;
+        
+        // Hvis likt poengavvik, sjekk gull-avvik
+        if (a.diffGull !== b.diffGull) return a.diffGull - b.diffGull;
+        
+        // Hvis likt gull-avvik, sjekk sølv-avvik
+        if (a.diffSolv !== b.diffSolv) return a.diffSolv - b.diffSolv;
+        
+        // Til slutt sjekk bronse-avvik
+        return a.diffBronse - b.diffBronse;
     });
 
     // 4. Tegn tabellen
@@ -131,9 +142,5 @@ function oppdaterAlt() {
     });
 }
 
-// Kjør med en gang
 oppdaterAlt();
 </script>
-
-</body>
-</html>
