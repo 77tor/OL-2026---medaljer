@@ -1,178 +1,139 @@
-<style>
-    .ol-container { font-family: sans-serif; max-width: 650px; margin: 20px auto; color: #333; }
-    table { border-collapse: collapse; width: 100%; background-color: #ffffff; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background-color: #f4f4f4; }
-    
-    /* Leaderboard styling */
-    .leaderboard-section { background-color: #fffde7; padding: 15px; border: 2px solid #fbc02d; border-radius: 8px; }
-    .pos-1 { background-color: #ffd700; font-weight: bold; } 
-    .winner-tag { font-size: 0.8em; color: #d32f2f; text-transform: uppercase; margin-left: 5px; }
-    
-    h3 { border-bottom: 1px solid #333; padding-bottom: 5px; }
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root { --gull: #FFD700; --solv: #C0C0C0; --bronse: #CD7F32; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; padding: 20px; }
+        .card { max-width: 500px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 25px; }
+        h1 { text-align: center; color: #1a365d; margin-top: 0; }
+        
+        .medal-display { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
+        .medal-unit { padding: 10px; border-radius: 12px; text-align: center; font-weight: bold; }
+        .medal-unit.g { background: var(--gull); }
+        .medal-unit.s { background: var(--solv); }
+        .medal-unit.b { background: var(--bronse); }
+        .medal-unit span { display: block; font-size: 32px; }
 
-    #leaderboard th, 
-    #leaderboard td {
-        padding: 2px 8px;
-        line-height: 1.2;
-    }
-</style>
+        .points-banner { background: #2d3748; color: white; text-align: center; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; border-bottom: 2px solid #edf2f7; padding: 8px; }
+        td { padding: 8px; border-bottom: 1px solid #edf2f7; }
+        .pos-1 { background: #fefcbf; }
+        .badge { background: #48bb78; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+        tbody tr:nth-child(even) { background-color: #fafafa; }
+    </style>
+</head>
+<body>
 
-<div class="ol-container">
-    <h3>🏅 Medaljestatus: Norge</h3>
+<div class="card">
+    <h1>🥇<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAWCAYAAADXYyzPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAC0SURBVEhLY9zFo/+fAQ+wOL6KYebx2wylbcvB/J2Lyhl0nz5kuJJaA+aTC5igNN3BqMV0A6MW0w0wvjt0Gm8+5jPSZuhftg8lHzuoSzF8vXkfzCcXMM5ffRCvxSCw4+AlhpVbToDZJaleDNpqMmA2JYCRQSGaoMW0AAMXxwvWHCLo4+0HLiKCOs2bQYcaQU04cWkBE9d+6ieu0dqJXmDUYrqBAbUYlJ3wYUwAEUVXRwJm+A8AyUZfevSu2TAAAAAASUVORK5CYII="> Medaljejakten 2026 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAWCAYAAADXYyzPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAC0SURBVEhLY9zFo/+fAQ+wOL6KYebx2wylbcvB/J2Lyhl0nz5kuJJaA+aTC5igNN3BqMV0A6MW0w0wvjt0Gm8+5jPSZuhftg8lHzuoSzF8vXkfzCcXMM5ffRCvxSCw4+AlhpVbToDZJaleDNpqMmA2JYCRQSGaoMW0AAMXxwvWHCLo4+0HLiKCOs2bQYcaQU04cWkBE9d+6ieu0dqJXmDUYrqBAbUYlJ3wYUwAEUVXRwJm+A8AyUZfevSu2TAAAAAASUVORK5CYII=">🥇</h1>
+
+    <div class="medal-display">
+        <div class="medal-unit g"><span id="nor-g">0</span>Gull</div>
+        <div class="medal-unit s"><span id="nor-s">0</span>Sølv</div>
+        <div class="medal-unit b"><span id="nor-b">0</span>Bronse</div>
+    </div>
+
+    <div class="points-banner">
+        <div style="font-size: 2rem; font-weight: bold;">Poeng: <span id="nor-p">0</span></div>
+        <div style="font-size: 0.8rem; opacity: 0.8;">(gull=3p, sølv=2p, bronse=1p)</div>
+    </div>
+
+    <h3>🏆 Stilling i konkurransen</h3>
     <table>
         <thead>
             <tr>
-                <th>Nasjon</th>
-                <th style="background:#ffd700">G</th>
-                <th style="background:#c0c0c0">S</th>
-                <th style="background:#cd7f32">B</th>
-                <th style="background:#e3f2fd">Total Poeng</th>
+                <th>#</th>
+                <th>Navn</th>
+                <th>Tips</th>
+                <th>Status</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>Norge</td>
-                <td id="norge-gull">6</td> 
-                <td id="norge-solv">2</td>
-                <td id="norge-bronse">4</td>
-                <td id="norge-poeng" style="font-weight:bold">0</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="leaderboard-section">
-        <h3>🏆 Tippekonkurranse: Stilling</h3>
-        <table id="leaderboard">
-            <thead>
-                <tr>
-                    <th>Plass</th>
-                    <th>Navn</th>
-                    <th>Tips (G-S-B)</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboard-body">
-                <tr data-navn="Monica" data-g="8" data-s="5" data-b="4"></tr>
-                <tr data-navn="Åse Reidun" data-g="11" data-s="7" data-b="7"></tr>
-                <tr data-navn="Tor" data-g="9" data-s="9" data-b="9"></tr>
-                <tr data-navn="Markus" data-g="11" data-s="7" data-b="14"></tr>
-                <tr data-navn="Cecilie" data-g="12" data-s="10" data-b="7"></tr>
-                <tr data-navn="Filip" data-g="10" data-s="11" data-b="12"></tr>
-                <tr data-navn="Geir" data-g="12" data-s="9" data-b="12"></tr>
-                <tr data-navn="Silje" data-g="11" data-s="9" data-b="15"></tr>
-                <tr data-navn="Daniel" data-g="14" data-s="7" data-b="11"></tr>
-                <tr data-navn="Janne" data-g="13" data-s="10" data-b="8"></tr>
-                <tr data-navn="André" data-g="12" data-s="11" data-b="10"></tr>
-                <tr data-navn="Hanne" data-g="12" data-s="11" data-b="12"></tr>
-                <tr data-navn="Tonje" data-g="13" data-s="10" data-b="12"></tr>
-                <tr data-navn="Truls" data-g="14" data-s="10" data-b="9"></tr>
-                <tr data-navn="Ingrid" data-g="12" data-s="12" data-b="12"></tr>
-                <tr data-navn="Anders" data-g="13" data-s="11" data-b="11"></tr>
+        <tbody id="leaderboard-body">
             </tbody>
-        </table>
-        <p><small>* Ved lik poengsum vinner den med tips nærmest faktisk antall gull.</small></p>
-    </div>
+    </table>
+<p><small>* Ved lik poengsum vinner den med tips nærmest faktisk antall gull.</small></p>
 </div>
 
 <script>
-async function oppdaterFraNRK() {
-    try {
-        // Vi prøver å hente data
-        const res = await fetch('https://psapi.nrk.no/sport/ol/medaljer');
-        if (!res.ok) throw new Error("API utilgjengelig");
-        
-        const data = await res.json();
-        
-        // NRK pakker ofte inn dataene i en liste. Vi leter etter 'NOR'
-        const norge = data.find(land => land.countryCode === 'NOR' || land.countryName === 'Norge');
+// ==========================================
+// HER OPPDATERER DU MEDALJENE MANUELT:
+// ==========================================
+const faktiskeMedaljer = {
+    gull: 6, 
+    solv: 2, 
+    bronse: 4
+};
 
-        if (norge) {
-            document.getElementById('norge-gull').innerText = norge.gold ?? norge.goldMedals ?? 0;
-            document.getElementById('norge-solv').innerText = norge.silver ?? norge.silverMedals ?? 0;
-            document.getElementById('norge-bronse').innerText = norge.bronze ?? norge.bronzeMedals ?? 0;
-            console.log("Suksess: Hentet data fra NRK");
-        }
-    } catch (error) {
-        console.warn("Kunne ikke hente live-data (CORS eller API-feil). Bruker tall fra tabellen.");
-    } finally {
-        // Uansett om fetch gikk bra eller ikke, beregn konkurransen
-        oppdaterKonkurranse();
-    }
-}
+// ==========================================
+// DELTAKERLISTE (TIPS)
+// ==========================================
+const deltakere = [
+    {navn: "Monica", g: 8, s: 5, b: 4},
+    {navn: "Åse Reidun", g: 11, s: 7, b: 7},
+    {navn: "Tor", g: 9, s: 9, b: 9},
+    {navn: "Markus", g: 11, s: 7, b: 14},
+    {navn: "Cecilie", g: 12, s: 10, b: 7},
+    {navn: "Filip", g: 10, s: 11, b: 12},
+    {navn: "Geir", g: 12, s: 9, b: 12},
+    {navn: "Silje", g: 11, s: 9, b: 15},
+    {navn: "Daniel", g: 14, s: 7, b: 11},
+    {navn: "Janne", g: 13, s: 10, b: 8},
+    {navn: "André", g: 12, s: 11, b: 10},
+    {navn: "Hanne", g: 12, s: 11, b: 12},
+    {navn: "Tonje", g: 13, s: 10, b: 12},
+    {navn: "Truls", g: 14, s: 10, b: 9},
+    {navn: "Ingrid", g: 12, s: 12, b: 12},
+    {navn: "Anders", g: 13, s: 11, b: 11}
+];
 
-function oppdaterKonkurranse() {
-    const faktG = parseInt(document.getElementById('norge-gull').innerText) || 0;
-    const faktS = parseInt(document.getElementById('norge-solv').innerText) || 0;
-    const faktB = parseInt(document.getElementById('norge-bronse').innerText) || 0;
-    
-    const faktPoeng = (faktG * 3) + (faktS * 2) + (faktB * 1);
-    document.getElementById('norge-poeng').innerText = faktPoeng;
+function oppdaterAlt() {
+    // 1. Vis medaljene øverst
+    document.getElementById('nor-g').innerText = faktiskeMedaljer.gull;
+    document.getElementById('nor-s').innerText = faktiskeMedaljer.solv;
+    document.getElementById('nor-b').innerText = faktiskeMedaljer.bronse;
 
-    let deltakere = [];
-    const rader = document.querySelectorAll('#leaderboard-body tr');
+    const faktPoeng = (faktiskeMedaljer.gull * 3) + (faktiskeMedaljer.solv * 2) + (faktiskeMedaljer.bronse * 1);
+    document.getElementById('nor-p').innerText = faktPoeng;
 
-    rader.forEach(rad => {
-        const navn = rad.getAttribute('data-navn');
-        if (!navn) return;
-
-        const g = parseInt(rad.getAttribute('data-g')) || 0;
-        const s = parseInt(rad.getAttribute('data-s')) || 0;
-        const b = parseInt(rad.getAttribute('data-b')) || 0;
-        
-        const poengTips = (g * 3) + (s * 2) + (b * 1);
-        
-        deltakere.push({ 
-            navn, g, s, b, poengTips, 
-            diffPoeng: Math.abs(faktPoeng - poengTips), 
-            diffGull: Math.abs(faktG - g),
-            diffSolv: Math.abs(faktS - s),
-            diffBronse: Math.abs(faktB - b)
-        });
+    // 2. Regn ut avvik for alle deltakere
+    let resultatListe = deltakere.map(d => {
+        const poengTips = (d.g * 3) + (d.s * 2) + (d.b * 1);
+        return {
+            ...d,
+            poengTips,
+            diffPoeng: Math.abs(faktPoeng - poengTips),
+            diffGull: Math.abs(faktiskeMedaljer.gull - d.g)
+        };
     });
 
-    // Her starter sorteringen (viktig linje!)
-    deltakere.sort((a, b) => {
+    // 3. Sorter: Lavest poengavvik først, så gullavvik
+    resultatListe.sort((a, b) => {
         if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
-        if (a.diffGull !== b.diffGull) return a.diffGull - b.diffGull;
-        if (a.diffSolv !== b.diffSolv) return a.diffSolv - b.diffSolv;
-        return a.diffBronse - b.diffBronse;
+        return a.diffGull - b.diffGull;
     });
 
+    // 4. Tegn tabellen
     const tbody = document.getElementById('leaderboard-body');
     tbody.innerHTML = '';
 
-    deltakere.forEach((d, index) => {
+    resultatListe.forEach((d, index) => {
         const row = tbody.insertRow();
         if (index === 0) row.className = 'pos-1';
         
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${d.navn} ${index === 0 ? '<span class="winner-tag">Leder!</span>' : ''}</td>
+            <td>${d.navn} ${index === 0 ? '<span class="badge">Leder!</span>' : ''}</td>
             <td>${d.g}-${d.s}-${d.b} (${d.poengTips}p)</td>
             <td>${d.diffPoeng === 0 ? '🎯 Spot on!' : d.diffPoeng + ' poeng unna'}</td>
         `;
     });
 }
 
-// Funksjon som starter det hele
-function startOppdatering() {
-    // 1. Kjør oppdatering med en gang siden laster
-    oppdaterFraNRK();
-
-    // 2. Sett opp intervall som kjører hvert 2. minutt (120 000 millisekunder)
-    setInterval(function() {
-        console.log("Auto-oppdatering kjører...");
-        oppdaterFraNRK();
-    }, 120000); 
-}
-
-// Kjør når siden er klar
-window.onload = startOppdatering;
-
+// Kjør med en gang
+oppdaterAlt();
 </script>
 
-
-
-
-
+</body>
+</html>
