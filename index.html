@@ -5,35 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medaljejakten 2026</title>
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥇</text></svg>">
-<link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥇</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥇</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏅</text></svg>">
+<link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏅</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏅</text></svg>">
 
     <style>
-        :root { --gull: #FFD700; --solv: #C0C0C0; --bronse: #CD7F32; }
+        :root { --gull: #FFD700; --solv: #C0C0C0; --bronse: #CD7F32; --dark: #1a365d; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; padding: 10px; }
-        .card { max-width: 500px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 25px; }
-        h1 { text-align: center; color: #1a365d; margin-top: 0; }
+        .card { max-width: 500px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 25px; overflow: hidden;}
+        h1 { text-align: center; color: var(--dark); margin-top: 0; }
+        
         .medal-display { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
         .medal-unit { padding: 10px; border-radius: 12px; text-align: center; font-weight: bold; }
-        .medal-unit.g { background: var(--gull); }
-        .medal-unit.s { background: var(--solv); }
-        .medal-unit.b { background: var(--bronse); }
+        .medal-unit.g { background: var(--gull); box-shadow: 0 4px 0 #b8860b; }
+        .medal-unit.s { background: var(--solv); box-shadow: 0 4px 0 #808080; }
+        .medal-unit.b { background: var(--bronse); box-shadow: 0 4px 0 #8b4513; }
         .medal-unit span { display: block; font-size: 32px; }
+
         .points-banner { background: #2d3748; color: white; text-align: center; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        
+        /* PODIUM / VINNER-VISNING */
+        .winner-section { display: none; text-align: center; margin-bottom: 40px; animation: fadeIn 1.5s ease-in; }
+        .winner-section h2 { margin-bottom: 30px; }
+
+        .podium { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-top: 75px; height: 160px; }
+        .podium-block { width: 100px; padding: 15px 5px; border-radius: 8px 8px 0 0; position: relative; font-weight: bold; display: flex; flex-direction: column; justify-content: flex-end; animation: riseUp 1s ease-out forwards; }
+        
+        .p-1 { background: var(--gull); height: 100%; order: 2; border: 2px solid #b8860b; z-index: 2; box-shadow: 0 0 25px rgba(255,215,0,0.4); }
+        .p-2 { background: var(--solv); height: 75%; order: 1; border: 2px solid #808080; }
+        .p-3 { background: var(--bronse); height: 55%; order: 3; border: 2px solid #8b4513; }
+        
+        .p-name { display: block; margin-bottom: 5px; font-size: 1rem; color: #1a365d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-tips { font-size: 0.75rem; background: rgba(255,255,255,0.4); border-radius: 4px; padding: 2px 4px; color: #000; }
+        .p-rank { font-size: 32px; position: absolute; top: -45px; left: 0; right: 0; line-height: 1; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
         th { text-align: left; border-bottom: 2px solid #edf2f7; padding: 8px; }
         td { padding: 8px; border-bottom: 1px solid #edf2f7; }
-        .pos-1 { background: #fefcbf; }
-        .badge { background: #48bb78; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
-        tbody tr:nth-child(even) { background-color: #fafafa; }
         #status-msg { text-align: center; font-size: 0.8rem; color: #666; margin-bottom: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes riseUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h1>Medaljejakten<br> 🥇 OL 2026 🥇</h1>
+    <div id="winner-reveal" class="winner-section">
+        <h2 style="margin:0; color: var(--dark); letter-spacing: 1px;">🏁 ENDELIG RESULTAT 🏁</h2>
+        <div id="podium-container" class="podium"></div>
+        <div style="margin-top: 25px; font-weight: bold; color: #48bb78;">Gratulerer til vinneren!</div>
+        <hr style="margin: 25px 0; border: 0; border-top: 2px dashed #edf2f7;">
+    </div>
+
+    <h1>Medaljejakten<br> 🏅 OL 2026 🏅</h1>
     <div id="status-msg">Laster medaljedata...</div>
 
     <div class="medal-display">
@@ -44,17 +69,17 @@
 
     <div class="points-banner">
         <div style="font-size: 2rem; font-weight: bold;">Poeng: <span id="nor-p">-</span></div>
-        <div style="font-size: 0.8rem; opacity: 0.8;">(gull=3p, sølv=2p, bronse=1p)</div>
+        <div style="font-size: 0.8rem; opacity: 0.8;">(🥇=3p, 🥈=2p, 🥉=1p)</div>
     </div>
 
-    <h3>🏆 Stilling i konkurransen</h3>
-    <table>
+    <h3 id="list-title">🏆 Stilling i konkurransen</h3>
+    <table id="leaderboard-table">
         <thead>
             <tr>
                 <th>#</th>
                 <th>Navn</th>
-                <th>Tips</th>
-                <th>Status</th>
+                <th>Tips (G-S-B)</th>
+                <th>Avvik</th>
             </tr>
         </thead>
         <tbody id="leaderboard-body"></tbody>
@@ -62,8 +87,11 @@
 </div>
 
 <script>
-// 1) Bruk RAW-URL til JSON (ren JSON, ikke callback)
 const GIST_URL = 'https://gist.githubusercontent.com/77tor/94059e011ad70a4a95e0be96a8da1c7d/raw/medaljer.json?nocache=' + new Date().getTime();
+
+// --- KONFIGURASJON ---
+const revealDate = new Date(2026, 1, 22, 13, 0, 0); 
+// ----------------------
 
 const deltakere = [
   {navn: "Monica", g: 8, s: 5, b: 4},
@@ -84,90 +112,104 @@ const deltakere = [
   {navn: "Anders", g: 13, s: 11, b: 11}
 ];
 
-// Beholder callback som ren funksjon som oppdaterer UI-et
 function callback(faktiskeMedaljer) {
-  document.getElementById('status-msg').innerText =
-    "Oppdatert: " + new Date().toLocaleTimeString();
+    document.getElementById('status-msg').innerText = "Oppdatert: " + new Date().toLocaleTimeString();
 
-  // Robust uthenting av feltnavn
-  const gull = Number(faktiskeMedaljer.gull ?? faktiskeMedaljer.g ?? 0);
-  const solv = Number(faktiskeMedaljer.solv ?? faktiskeMedaljer.s ?? 0);
-  const bronse = Number(faktiskeMedaljer.bronse ?? faktiskeMedaljer.b ?? 0);
+    const gull = Number(faktiskeMedaljer.gull ?? faktiskeMedaljer.g ?? 0);
+    const solv = Number(faktiskeMedaljer.solv ?? faktiskeMedaljer.s ?? 0);
+    const bronse = Number(faktiskeMedaljer.bronse ?? faktiskeMedaljer.b ?? 0);
 
-  document.getElementById('nor-g').innerText = gull;
-  document.getElementById('nor-s').innerText = solv;
-  document.getElementById('nor-b').innerText = bronse;
+    document.getElementById('nor-g').innerText = gull;
+    document.getElementById('nor-s').innerText = solv;
+    document.getElementById('nor-b').innerText = bronse;
 
-  const faktPoeng = (gull * 3) + (solv * 2) + (bronse * 1);
-  document.getElementById('nor-p').innerText = faktPoeng;
+    const faktPoeng = (gull * 3) + (solv * 2) + (bronse * 1);
+    document.getElementById('nor-p').innerText = faktPoeng;
 
-  // Regn ut avvik for deltakere
-  let resultatListe = deltakere.map(d => {
-    const poengTips = (d.g * 3) + (d.s * 2) + (d.b * 1);
-    return {
-      ...d,
-      poengTips,
-      diffPoeng: Math.abs(faktPoeng - poengTips),
-      diffGull: Math.abs(gull - d.g),
-      diffSolv: Math.abs(solv - d.s),
-      diffBronse: Math.abs(bronse - d.b)
-    };
-  });
+    let resultatListe = deltakere.map(d => {
+        const poengTips = (d.g * 3) + (d.s * 2) + (d.b * 1);
+        return {
+            ...d,
+            poengTips,
+            diffPoeng: Math.abs(faktPoeng - poengTips),
+            diffGull: Math.abs(gull - d.g),
+            diffSolv: Math.abs(solv - d.s),
+            diffBronse: Math.abs(bronse - d.b)
+        };
+    });
 
-  // Sortering (poeng -> gull -> sølv -> bronse)
-  resultatListe.sort((a, b) => {
-    if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
-    if (a.diffGull !== b.diffGull)   return a.diffGull - b.diffGull;
-    if (a.diffSolv !== b.diffSolv)   return a.diffSolv - b.diffSolv;
-    return a.diffBronse - b.diffBronse;
-  });
+    resultatListe.sort((a, b) => {
+        if (a.diffPoeng !== b.diffPoeng) return a.diffPoeng - b.diffPoeng;
+        if (a.diffGull !== b.diffGull)   return a.diffGull - b.diffGull;
+        if (a.diffSolv !== b.diffSolv)   return a.diffSolv - b.diffSolv;
+        return a.diffBronse - b.diffBronse;
+    });
 
-  // Bygg en liten forklaring for tie-breaker per rad
-  const forklar = (d) => {
-    if (d.diffPoeng === 0 && d.diffGull === 0 && d.diffSolv === 0 && d.diffBronse === 0) {
-      return '🎯 Spot on!';
+    if (new Date() >= revealDate) {
+        visVinner(resultatListe);
     }
-    // Beskriv hva som avgjør rekkefølgen (første avvik som ikke er 0)
-    if (d.diffPoeng !== 0) return `${d.diffPoeng} poeng unna`;
-    if (d.diffGull  !== 0) return `lik poeng • nærmest gull (${d.diffGull})`;
-    if (d.diffSolv  !== 0) return `likt poeng & gull • nærmest sølv (${d.diffSolv})`;
-    if (d.diffBronse!== 0) return `likt poeng, gull & sølv • nærmest bronse (${d.diffBronse})`;
-    return 'Lik på alle kriterier';
-  };
 
-  // Tegn tabellen
-  const tbody = document.getElementById('leaderboard-body');
-  tbody.innerHTML = '';
-  resultatListe.forEach((d, index) => {
-    const row = tbody.insertRow();
-    if (index === 0) row.className = 'pos-1';
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${d.navn} ${index === 0 ? '<span class="badge">Leder!</span>' : ''}</td>
-      <td>${d.g}-${d.s}-${d.b} (${d.poengTips}p)</td>
-      <td>${forklar(d)}</td>
+    const tbody = document.getElementById('leaderboard-body');
+    tbody.innerHTML = '';
+    resultatListe.forEach((d, index) => {
+        const row = tbody.insertRow();
+        
+        // Utheving kun for lederen
+        if (index === 0) {
+            row.style.backgroundColor = "#fffde7";
+            row.style.fontWeight = "bold";
+        }
+
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${d.navn} ${index === 0 ? '👑 <span style="background:#48bb78;color:white;padding:2px 5px;border-radius:4px;font-size:10px;">Leder!</span>' : ''}</td>
+          <td>${d.g}-${d.s}-${d.b} (${d.poengTips}p)</td>
+          <td>${d.diffPoeng} poeng unna</td>
+        `;
+    });
+}
+
+function visVinner(liste) {
+    const section = document.getElementById('winner-reveal');
+    const podium = document.getElementById('podium-container');
+    const listTitle = document.getElementById('list-title');
+    
+    section.style.display = 'block';
+    listTitle.innerText = "Fullstendig resultatliste";
+    
+    const fmt = (d) => `${d.g}-${d.s}-${d.b}`;
+
+    podium.innerHTML = `
+        <div class="podium-block p-2">
+            <span class="p-rank">🥈</span>
+            <span class="p-name">${liste[1].navn}</span>
+            <span class="p-tips">${fmt(liste[1])}</span>
+        </div>
+        <div class="podium-block p-1">
+            <span class="p-rank">🥇</span>
+            <span class="p-name">${liste[0].navn}</span>
+            <span class="p-tips">${fmt(liste[0])}</span>
+        </div>
+        <div class="podium-block p-3">
+            <span class="p-rank">🥉</span>
+            <span class="p-name">${liste[2].navn}</span>
+            <span class="p-tips">${fmt(liste[2])}</span>
+        </div>
     `;
-  });
 }
 
-// 2) Hent JSON fra Gist og kall callback
 async function hentMedaljer() {
-  const statusEl = document.getElementById('status-msg');
-  try {
-    statusEl.innerText = 'Laster medaljedata...';
-    const res = await fetch(GIST_URL, { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json(); // <- ren JSON
-    callback(data);
-  } catch (err) {
-    console.error(err);
-    statusEl.innerText = 'Klarte ikke hente medaljedata.';
-  }
+    try {
+        const res = await fetch(GIST_URL, { cache: 'no-store' });
+        const data = await res.json();
+        callback(data);
+    } catch (err) {
+        document.getElementById('status-msg').innerText = 'Kunne ikke oppdatere data.';
+    }
 }
 
-// Start
 hentMedaljer();
-
-// (Valgfritt) Oppdater hvert minutt under mesterskap
-// setInterval(hentMedaljer, 60_000);
+setInterval(hentMedaljer, 60000);
 </script>
+</body>
+</html>
